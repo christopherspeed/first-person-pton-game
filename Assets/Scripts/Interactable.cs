@@ -5,17 +5,6 @@ using UnityEngine.Events;
 
 public class Interactable : MonoBehaviour
 {
+    // the action(s) you want to be executed; a more general interface that you supply with other component events
     public UnityEvent onInteract;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

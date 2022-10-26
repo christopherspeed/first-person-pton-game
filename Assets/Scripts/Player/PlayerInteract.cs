@@ -9,6 +9,8 @@ public class PlayerInteract : MonoBehaviour
     public LayerMask InteractibleLayer;
     UnityEvent interactAction;
     public PlayerInputManager _inputs;
+    bool canInteract = true;
+    float interactionDelay = .2f;
     
     private void Update() {
         RaycastHit hitInfo;
@@ -23,7 +25,19 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
+    
     bool InteractPressed(){
-        return _inputs.InteractionInput;
+        if (canInteract) 
+        {
+            StartCoroutine(InteractionDelay()); // implement a slight delay
+            return _inputs.InteractionInput;
+        }
+        else return false;
+    }
+    
+    IEnumerator InteractionDelay (){
+        canInteract = false;
+        yield return new WaitForSeconds(interactionDelay);
+        canInteract = true;
     }
 }
