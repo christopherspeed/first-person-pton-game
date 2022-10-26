@@ -145,8 +145,9 @@ public class PlayerMovement : MonoBehaviour
         GetJumpInput();
         GetSprintInput();
 
-        moveDirection = transform.forward * verticalMovement + transform.right * horizontalMovement;
-        if (sprintPressed) moveDirection *= sprintSpeedMultiplier;
+        // only apply sprinting to our forward direction
+        Vector3 forwardDir = (sprintPressed) ? transform.forward * sprintSpeedMultiplier : transform.forward;
+        moveDirection = forwardDir * verticalMovement + transform.right * horizontalMovement;
     }
     private void FixedUpdate()
     {
