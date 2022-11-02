@@ -24,6 +24,7 @@ public class PlayerInputManager : MonoBehaviour
     private bool _shootInput;
 
     public bool InteractionInput {get{return _interactionInput;}}
+    public bool ShootInput {get{return _shootInput;}}
 
     private void Awake() {
         playerControls = new PlayerControls();
@@ -44,6 +45,9 @@ public class PlayerInputManager : MonoBehaviour
         // connect interaction inputs
         playerControls.Interact.Interact.performed += GetInteractionInput;
         playerControls.Interact.Interact.canceled += GetInteractionInput;
+
+        playerControls.Attack.Fire.performed += GetFireInput;
+        playerControls.Attack.Fire.canceled += GetFireInput;
     }
 
     
@@ -75,6 +79,10 @@ public class PlayerInputManager : MonoBehaviour
     private void GetInteractionInput(InputAction.CallbackContext ctx)
     {
         _interactionInput = ctx.ReadValueAsButton();
+    }
+
+    private void GetFireInput(InputAction.CallbackContext ctx){
+        _shootInput = ctx.ReadValueAsButton();
     }
     #endregion
 
