@@ -11,7 +11,6 @@ public class PlayerMovement : MonoBehaviour
     public float sprintSpeedMultiplier = 1.5f;
     public float movementMultiplier = 10f;
     
-    // [SerializeField] float airMultiplier = 0.4f;
     // movement state variables
     float horizontalMovement;
     float verticalMovement;
@@ -21,8 +20,7 @@ public class PlayerMovement : MonoBehaviour
     bool sprintPressed;
 
     [Header("Drag")]
-    public float rbDrag = 6f;
-    // float airDrag = 2f;    
+    public float rbDrag = 6f;   
 
     [Header("Jumping")]
     public float jumpHeight = 10f;
@@ -38,8 +36,6 @@ public class PlayerMovement : MonoBehaviour
     bool isFalling;
     bool isJumping;
     public bool canJump;
-    [SerializeField] float jumpBufferWindow = 0.5f;
-    [SerializeField] float groundedBufferWindow = 0.2f;
     public float lastGroundedTime;
     public float lastJumpTime;
 
@@ -49,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] PlayerInputManager _inputs;
     Vector3 moveDirection;
     Rigidbody rb;
+    [SerializeField] bool usePhysicsMovement = true;
 
 
     private void Start()
@@ -72,6 +69,11 @@ public class PlayerMovement : MonoBehaviour
         GetInput();
         CheckGround();
         ControlDrag();
+
+        // didactic
+        if (!usePhysicsMovement){
+            MovePlayerWithTranslation();
+        }
     }
 
     private void CheckGround()
@@ -151,8 +153,16 @@ public class PlayerMovement : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        MovePlayer();
+        if (usePhysicsMovement){
+            MovePlayer();
+        }
         HandleJumpAndGravity();
+    }
+
+    private void MovePlayerWithTranslation()
+    {
+        Vector3 directionToMove = movementMultiplier * moveSpeed * moveDirection;
+        transform.Translate(directionToMove * Time.deltaTime * 0.5f, Space.World);
     }
 
     private void MovePlayer()
