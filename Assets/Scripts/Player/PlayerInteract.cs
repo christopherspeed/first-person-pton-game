@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class PlayerInteract : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PlayerInteract : MonoBehaviour
     public PlayerInputManager _inputs;
     bool canInteract = true;
     float interactionDelay = .2f;
+    public Canvas InteractionPromptCanvas;
     
     private void Update() {
         RaycastHit hitInfo;
@@ -18,10 +20,15 @@ public class PlayerInteract : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.forward, out hitInfo, 2, InteractibleLayer)){
             if (hitInfo.collider.GetComponent<Interactable>()){
                 interactAction = hitInfo.collider.GetComponent<Interactable>().onInteract;
+                InteractionPromptCanvas.enabled = true;
                 if (InteractPressed()){
                     interactAction.Invoke();
                 }
             }
+        }
+        else {
+            // ensure that interaction canvas doesn't display if we're not near an interactable object
+            InteractionPromptCanvas.enabled = false;
         }
     }
 
