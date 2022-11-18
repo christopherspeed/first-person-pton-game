@@ -29,7 +29,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float gravity;
     [SerializeField] float jumpForce;
     [SerializeField] float fallMultiplier = 1.5f;
-    [SerializeField] float jumpVelocityFalloff = 0.2f;
 
     // jumping variables
     bool jumpPressed;
@@ -76,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
             MovePlayerWithTranslation();
         }
 
-        HandleJumpAndGravity();
+        
     }
 
     private void CheckGround()
@@ -121,14 +120,7 @@ public class PlayerMovement : MonoBehaviour
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
                 lastGroundedTime = Time.time;
                 StartCoroutine(DelayJumpInput());
-            } else {
-                // rb.AddForce(0.1f * gravity * Vector3.up, ForceMode.Acceleration);
-            }
-        // } else if (Time.time - lastGroundedTime <= coyoteTimeBuffer && canJump){
-        //     if (jumpPressed){
-        //         rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
-        //         StartCoroutine(DelayJumpInput());
-        //     }
+            } 
         } else {
             rb.AddForce(fallMultiplier * gravity * Vector3.up, ForceMode.Acceleration);
         }
@@ -167,6 +159,7 @@ public class PlayerMovement : MonoBehaviour
             MovePlayer();
         }
         HandleJumpAndGravity();
+        
     }
 
     private void MovePlayerWithTranslation()
