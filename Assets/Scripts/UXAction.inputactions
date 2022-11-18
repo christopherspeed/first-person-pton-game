@@ -1,0 +1,34 @@
+{
+    "name": "UXAction",
+    "maps": [
+        {
+            "name": "State",
+            "id": "bceb96b5-8896-451f-a3fb-3afbc0d1acee",
+            "actions": [
+                {
+                    "name": "Quit Game",
+                    "type": "Button",
+                    "id": "11c664b7-81b3-4bec-914d-0ed89ba4cfc5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0907f4f9-528c-495b-bad2-8fe2cb5e5acd",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Quit Game",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
