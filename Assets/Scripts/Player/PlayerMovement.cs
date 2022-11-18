@@ -81,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckGround()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, playerHeight / 2 + 0.1f);
+        isGrounded = Physics.SphereCast(transform.position, 0.2f, Vector3.down, out groundHit, playerHeight / 2 + 0.1f);
 
         if (groundHit.normal != Vector3.up)
         {
@@ -103,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
             // allow for any movement that isn't forward 
             if (Vector3.Dot(groundHit.normal, moveDirection) < 0){
                 moveDirection = new Vector3(0,0,0);
+                onSlope = true;
             }
             isGrounded = false; // don't allow jumping up the slope, skyrim-style
         }
