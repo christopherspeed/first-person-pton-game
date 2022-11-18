@@ -11,6 +11,7 @@ public class PlayerLook : MonoBehaviour
     public float verticalSensitivity = 5f;
 
     [SerializeField] Transform cam;
+    [SerializeField] Transform playerOrientation;
 
     private float mouseX;
     private float mouseY;
@@ -33,6 +34,8 @@ public class PlayerLook : MonoBehaviour
     private void Update()
     {
         GetInput();
+        cam.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
+        playerOrientation.transform.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
     private void GetInput()
@@ -45,12 +48,6 @@ public class PlayerLook : MonoBehaviour
 
         // clamp, to prevent flipping
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-    }
-
-    private void LateUpdate()
-    {
-        cam.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
-        transform.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
 

@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInputManager))]
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] Transform playerOrientation;
     [Header("Movement")]
     public float moveSpeed = 6f;
     public float sprintSpeedMultiplier = 1.5f;
@@ -36,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     bool isFalling;
     bool isJumping;
     public bool canJump;
+    public float coyoteTimeBuffer = 0.3f;
     public float lastGroundedTime;
     public float lastJumpTime;
 
@@ -67,18 +69,19 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         GetInput();
-        CheckGround();
         ControlDrag();
-
+        CheckGround();
         // didactic
         if (!usePhysicsMovement){
             MovePlayerWithTranslation();
         }
+
+        HandleJumpAndGravity();
     }
 
     private void CheckGround()
     {
-        isGrounded = Physics.SphereCast(transform.position, 0.4f, Vector3.down, out groundHit, playerHeight / 2 + 0.1f);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, playerHeight / 2 + 0.1f);
 
         if (groundHit.normal != Vector3.up)
         {
@@ -112,23 +115,21 @@ public class PlayerMovement : MonoBehaviour
         gravity = -2 * (jumpHeight / (Mathf.Pow(timeToJumpApex, 2)));
         jumpForce = 2 * jumpHeight / timeToJumpApex;
 
-        // 1. Am I on the ground? If not, am I falling? (That is, is jump pressed still and I'm still accelerating upward (my velocity isn't zero in the y))
-        // Also, if I pull off a coyote time jump, I want to use the normal gravity during that arc, not the fall gravity!
-        if (isGrounded)
-        {
-            if (jumpPressed) rb.AddForce(jumpForce * transform.up, ForceMode.VelocityChange);
-            // rb.AddForce(-0.1f * Vector3.up, ForceMode.Acceleration);
-        }
-        else
-        {
-            if (rb.velocity.y < jumpVelocityFalloff)
-            {
-                rb.AddForce(fallMultiplier * gravity * Vector3.up, ForceMode.Acceleration);
+        if (isGrounded) {
+            if (jumpPressed && canJump){
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+                lastGroundedTime = Time.time;
+                StartCoroutine(DelayJumpInput());
+            } else {
+                // rb.AddForce(0.1f * gravity * Vector3.up, ForceMode.Acceleration);
             }
-            else
-            {
-                rb.AddForce(gravity * Vector3.up, ForceMode.Acceleration);
-            }
+        // } else if (Time.time - lastGroundedTime <= coyoteTimeBuffer && canJump){
+        //     if (jumpPressed){
+        //         rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        //         StartCoroutine(DelayJumpInput());
+        //     }
+        } else {
+            rb.AddForce(fallMultiplier * gravity * Vector3.up, ForceMode.Acceleration);
         }
 
     }
@@ -137,6 +138,14 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 jumpDir = jumpForce * transform.up;
         
+    }
+
+    IEnumerator DelayJumpInput(){
+        canJump = false;
+        print("Can't Jump");
+        yield return new WaitForSeconds(0.5f);
+        canJump = true;
+        print("Can Jump");
     }
 
     private void GetInput()
@@ -148,8 +157,8 @@ public class PlayerMovement : MonoBehaviour
         GetSprintInput();
 
         // only apply sprinting to our forward direction
-        Vector3 forwardDir = (sprintPressed) ? transform.forward * sprintSpeedMultiplier : transform.forward;
-        moveDirection = forwardDir * verticalMovement + transform.right * horizontalMovement;
+        Vector3 forwardDir = (sprintPressed) ? playerOrientation.forward * sprintSpeedMultiplier : playerOrientation.forward;
+        moveDirection = forwardDir * verticalMovement + playerOrientation.right * horizontalMovement;
     }
     private void FixedUpdate()
     {
